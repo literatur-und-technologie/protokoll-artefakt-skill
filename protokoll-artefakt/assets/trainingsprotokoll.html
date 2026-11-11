@@ -232,7 +232,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       </div>
       <p class="msg" id="expMsg" role="status"></p>
       <textarea id="preview" rows="8" readonly hidden aria-label="Markdown-Vorschau"></textarea>
-      <p class="note">Die CSV ist mit Semikolon getrennt und hat eine Zeile pro Übung und Tag, mit Durchschnittswerten für Wiederholungen und Gewicht. Dezimalzahlen haben ein Komma. Beide Dateien enthalten nur den gewählten Zeitraum.</p>
+      <p class="note">Die CSV ist mit Semikolon getrennt und hat eine Zeile pro Übung und Tag, mit Durchschnittswerten für Wiederholungen und Gewicht sowie höchstem Gewicht und Volumen. Dezimalzahlen haben ein Komma. Beide Dateien enthalten nur den gewählten Zeitraum.</p>
     </div>
     <div class="card">
       <h2>Datensicherung</h2>
@@ -256,7 +256,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
         <div class="field"><span class="label">Gewicht optional</span><span>Bei Calisthenics oder Übungen mit Körpergewicht lässt du das Feld leer. Dann zählen nur die Wiederholungen.</span></div>
         <div class="field"><span class="label">Zuletzt und Vorschläge</span><span>Frühere Übungsnamen erscheinen als Vorschlag. Unter dem Namen siehst du die Sätze vom letzten Mal und kannst sie übernehmen.</span></div>
         <div class="field"><span class="label">Schwimmen und Biken</span><span>Hier trägst du nur die Dauer in Minuten ein. Die Beschreibung ist frei, etwa „Brust, Hallenbad“.</span></div>
-        <div class="field"><span class="label">Entwicklung lesen</span><span>Im Verlauf wählst du eine Übung und siehst Gewicht, Wiederholungen, Volumen oder Dauer über die Zeit.</span></div>
+        <div class="field"><span class="label">Entwicklung lesen</span><span>Im Verlauf wählst du eine Übung und siehst höchstes Gewicht, Ø Gewicht, Ø Wiederholungen, Volumen oder Dauer über die Zeit. Für Steigerungen eignet sich das höchste Gewicht am besten.</span></div>
       </div>
       <div class="hint">Gleiche Übungen werden über den Namen zusammengeführt. Schreibe „Kniebeuge“ also immer gleich. Groß- und Kleinschreibung spielt keine Rolle.</div>
     </div>
@@ -269,6 +269,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   var KEY = "trainingsprotokoll-v1";
   var TYPES = ["Kraft", "Calisthenics", "Schwimmen", "Biken"];
   var METRICS = [
+    { id: "maxW", label: "Max. Gewicht", unit: " kg", end: false, dec: 2 },
     { id: "avgW", label: "Ø Gewicht", unit: " kg", end: false, dec: 2 },
     { id: "avgR", label: "Ø Wiederholungen", unit: "", end: false, dec: 1 },
     { id: "vol", label: "Volumen", unit: " kg", end: false, dec: 0 },
@@ -346,6 +347,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       n: ss.length, reps: sum(reps),
       avgR: reps.length ? sum(reps) / reps.length : NaN,
       avgW: ws.length ? sum(ws) / ws.length : NaN,
+      maxW: ws.length ? Math.max.apply(null, ws) : NaN,
       vol: hasVol ? vol : NaN, dur: num(r.dur)
     };
   }
@@ -583,7 +585,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
         } else {
           var all = []; rows.forEach(function (r) { all = all.concat(r.sets); });
           var a = agg({ sets: all, dur: "" });
-          p.n = a.n; p.avgR = a.avgR; p.avgW = a.avgW; p.vol = a.vol;
+          p.n = a.n; p.avgR = a.avgR; p.avgW = a.avgW; p.maxW = a.maxW; p.vol = a.vol;
         }
         return p;
       });
@@ -691,11 +693,11 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       head = "<tr><th>Datum</th><th>Dauer (Min.)</th></tr>";
       body = rows.map(function (p) { return "<tr><td>" + shortDate(p.d) + "</td><td>" + fmt(p.dur, 0) + "</td></tr>"; }).join("");
     } else {
-      head = "<tr><th>Datum</th><th>Sätze</th><th>Ø Wdh.</th><th>Ø kg</th><th>Volumen</th></tr>";
-      body = rows.map(function (p) { return "<tr><td>" + shortDate(p.d) + "</td><td>" + p.n + "</td><td>" + fmt(p.avgR, 1) + "</td><td>" + fmt(p.avgW, 2) + "</td><td>" + fmt(p.vol, 0) + "</td></tr>"; }).join("");
+      head = "<tr><th>Datum</th><th>Sätze</th><th>Ø Wdh.</th><th>Ø kg</th><th>Max. kg</th><th>Volumen</th></tr>";
+      body = rows.map(function (p) { return "<tr><td>" + shortDate(p.d) + "</td><td>" + p.n + "</td><td>" + fmt(p.avgR, 1) + "</td><td>" + fmt(p.avgW, 2) + "</td><td>" + fmt(p.maxW, 2) + "</td><td>" + fmt(p.vol, 0) + "</td></tr>"; }).join("");
     }
     $("devTable").innerHTML = "<thead>" + head + "</thead><tbody>" + body + "</tbody>";
-    $("devNote").textContent = metric === "vol" ? "Volumen ist die Summe aus Wiederholungen × Gewicht aller Sätze eines Tages." : (s.end ? "" : "Mehrere Blöcke derselben Übung an einem Tag werden zusammengerechnet.");
+    $("devNote").textContent = metric === "vol" ? "Volumen ist die Summe aus Wiederholungen × Gewicht aller Sätze eines Tages. Sätze ohne Gewicht zählen nicht mit." : metric === "maxW" ? "Max. Gewicht ist das höchste Gewicht, das du an diesem Tag bei der Übung eingetragen hast." : (s.end ? "" : "Mehrere Blöcke derselben Übung an einem Tag werden zusammengerechnet.");
   }
 
   function drawChart() {
@@ -769,13 +771,13 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   }
   function csvCell(v) { v = String(v == null ? "" : v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; }
   function buildCsv(ds) {
-    var lines = [["Datum", "Art", "Übung", "Sätze", "Ø Wiederholungen", "Ø Gewicht (kg)", "Dauer (Min.)", "Notiz", "Befinden"].map(csvCell).join(";")];
+    var lines = [["Datum", "Art", "Übung", "Sätze", "Ø Wiederholungen", "Ø Gewicht (kg)", "Max. Gewicht (kg)", "Volumen (kg)", "Dauer (Min.)", "Notiz", "Befinden"].map(csvCell).join(";")];
     ds.forEach(function (k) {
       var d = days[k], rows = filled(d);
-      if (!rows.length) { lines.push([k, "", "", "", "", "", "", "", d.f.feel].map(csvCell).join(";")); return; }
+      if (!rows.length) { lines.push([k, "", "", "", "", "", "", "", "", "", d.f.feel].map(csvCell).join(";")); return; }
       rows.forEach(function (r, i) {
         var a = agg(r), end = isEnd(r.k);
-        lines.push([k, TYPES[r.k], r.name.trim(), end ? "" : a.n, end ? "" : fmt(a.avgR, 1), end ? "" : fmt(a.avgW, 2), end ? fmt(a.dur, 0) : "", r.note, i === 0 ? d.f.feel : ""].map(csvCell).join(";"));
+        lines.push([k, TYPES[r.k], r.name.trim(), end ? "" : a.n, end ? "" : fmt(a.avgR, 1), end ? "" : fmt(a.avgW, 2), end ? "" : fmt(a.maxW, 2), end ? "" : fmt(a.vol, 0), end ? fmt(a.dur, 0) : "", r.note, i === 0 ? d.f.feel : ""].map(csvCell).join(";"));
       });
     });
     return "﻿" + lines.join("\r\n");

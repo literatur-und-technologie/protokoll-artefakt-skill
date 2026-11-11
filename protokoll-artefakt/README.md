@@ -34,8 +34,8 @@ Er wurde für Claude geschrieben und setzt dort auf „Artefakte“ (Webseiten, 
 - Aus der Vorlage ein **fertiges Protokoll** mit vier Reitern erzeugen: Tag, Verlauf, Export, Hilfe.
 - **Einträge pro Tag** erfassen, bei Kraft und Calisthenics jeden Satz einzeln, Gewicht optional, bei Ausdauer nur die Dauer.
 - **Vorschläge** aus früheren Einträgen anbieten und die Sätze vom letzten Mal übernehmen lassen.
-- Den **Verlauf pro Übung** als Diagramm und Tabelle zeigen (Gewicht, Wiederholungen, Volumen, Sätze, Dauer).
-- **Exportieren** als CSV (Semikolon, Dezimalkomma, eine Zeile pro Übung und Tag mit Durchschnittswerten), als Markdown und als JSON-Sicherung, mit Wiedereinlesen der Sicherung.
+- Den **Verlauf pro Übung** als Diagramm und Tabelle zeigen (höchstes Gewicht, Ø Gewicht, Ø Wiederholungen, Volumen, Sätze, Dauer). Für Steigerungen eignet sich das höchste Gewicht am besten.
+- **Exportieren** als CSV (Semikolon, Dezimalkomma, eine Zeile pro Übung und Tag mit Durchschnittswerten, höchstem Gewicht und Volumen), als Markdown und als JSON-Sicherung, mit Wiedereinlesen der Sicherung.
 - **Im eigenen Konto speichern**, wenn die Umgebung das erlaubt (nur du siehst die Einträge), sonst im Browser auf dem Gerät.
 - Auf dem Smartphone nutzbar sein und ein helles und dunkles Erscheinungsbild haben.
 

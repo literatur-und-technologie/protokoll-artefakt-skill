@@ -95,6 +95,7 @@ Für das Ernährungsprotokoll `references/ernaehrung.md` lesen. Dort stehen Feld
 **Verlauf und Diagramm**
 - Reihen nach Namen zusammenführen, ohne Unterschied bei Groß- und Kleinschreibung. Mehrere Blöcke am selben Tag zusammenrechnen.
 - Nur Kennzahlen anbieten, für die Werte existieren.
+- Für sichtbare Steigerungen ist das höchste Gewicht des Tages die klarste Kennzahl und die Voreinstellung. Der Durchschnitt verwischt Stufen (Sätze mit 4, 4 und 5 kg ergeben 4,33). Das Volumen (Wiederholungen × Gewicht) bleibt als Zusatz, mit Hinweis, dass Sätze ohne Gewicht nicht zählen.
 - Diagramm als SVG in der echten Breite des Containers, Zeitachse maßstäblich, runde Achsenwerte, bei Zählwerten ganze Schritte. Farben nur aus Tokens. Neu zeichnen bei Größenänderung.
 - Darunter Erster Wert, Letzter Wert, Bestwert und eine Tabelle.
 
