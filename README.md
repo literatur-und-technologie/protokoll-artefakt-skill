@@ -4,6 +4,19 @@ Ein Skill für Claude, der ein persönliches Protokoll als einzelne Webseite bau
 
 Der Skill stellt zuerst Fragen, eine nach der anderen, und baut danach aus einer mitgelieferten Vorlage das passende Protokoll. Er braucht keine bestehenden Artefakte.
 
+## Wichtiger Hinweis
+
+Ich bin kein Programmierer.
+Dieser Skill wird so bereitgestellt, wie er ist, ohne Garantie, Support oder laufende Pflege.
+
+* Keine Fehlermeldungen
+* Keine Funktionswünsche
+* Kein Versprechen, dass er in Zukunft weiter funktioniert
+
+Wenn er bei dir funktioniert: schön.
+Wenn nicht: Passe ihn gern für deine Zwecke an.
+Nutzung auf eigene Gefahr.
+
 ## Inhalt
 
 | Pfad | Zweck |
