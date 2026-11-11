@@ -15,7 +15,7 @@ Der Skill stellt zuerst Fragen, eine nach der anderen, und baut danach aus einer
 
 ## Schnellstart in Claude
 
-1. Den Ordner `protokoll-artefakt` als ZIP-Datei packen. Die ZIP-Datei muss den Ordner selbst enthalten, nicht nur seinen Inhalt.
+1. Die Datei `protokoll-artefakt.zip` aus dem [neuesten Release](https://github.com/literatur-und-technologie/protokoll-artefakt-skill/releases/latest) herunterladen. Wer den Skill vorher selbst ändert, packt den Ordner `protokoll-artefakt` selbst als ZIP. Die ZIP-Datei muss den Ordner selbst enthalten, nicht nur seinen Inhalt.
 2. Die ZIP-Datei in Claude in den Einstellungen unter Fähigkeiten (Skills) hochladen.
 3. Im Chat sagen, was protokolliert werden soll, etwa „Ich möchte ein Protokoll für mein Training“, und die Fragen der Reihe nach beantworten.
 
