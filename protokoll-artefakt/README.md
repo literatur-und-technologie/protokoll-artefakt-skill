@@ -1,5 +1,18 @@
 # Skill „protokoll-artefakt“
 
+## Wichtiger Hinweis
+
+Ich bin kein Programmierer.
+Dieser Skill wird so bereitgestellt, wie er ist, ohne Garantie, Support oder laufende Pflege.
+
+* Keine Fehlermeldungen
+* Keine Funktionswünsche
+* Kein Versprechen, dass er in Zukunft weiter funktioniert
+
+Wenn er bei dir funktioniert: schön.
+Wenn nicht: Passe ihn gern für deine Zwecke an.
+Nutzung auf eigene Gefahr.
+
 ## Was der Skill ist
 
 Ein Skill ist ein Ordner mit Anweisungen, die ein KI-Assistent vor einer Aufgabe liest. Dieser Skill erklärt, wie man ein **persönliches Protokoll als einzelne Webseite** baut: ein Trainingsprotokoll, ein Ernährungsprotokoll oder ein ähnliches Logbuch (Schlaf, Lesen, Schreiben, Stimmung).
