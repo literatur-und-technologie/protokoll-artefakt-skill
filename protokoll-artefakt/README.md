@@ -35,7 +35,7 @@ Er wurde für Claude geschrieben und setzt dort auf „Artefakte“ (Webseiten, 
 - **Einträge pro Tag** erfassen, bei Kraft und Calisthenics jeden Satz einzeln, Gewicht optional, bei Ausdauer nur die Dauer.
 - **Vorschläge** aus früheren Einträgen anbieten und die Sätze vom letzten Mal übernehmen lassen.
 - Den **Verlauf pro Übung** als Diagramm und Tabelle zeigen (höchstes Gewicht, höchste Wiederholungszahl, Volumen, Sätze, Dauer). Für Steigerungen eignet sich das höchste Gewicht am besten.
-- **Exportieren** als CSV (Semikolon, Dezimalkomma, eine Zeile pro Übung und Tag mit höchster Wiederholungszahl, höchstem Gewicht und Volumen), als Markdown und als JSON-Sicherung, mit Wiedereinlesen der Sicherung.
+- **Exportieren** für einen Zeitraum und wahlweise nur für eine einzelne Übung, etwa als Grundlage für ein Liniendiagramm. Formate: CSV (Semikolon, Dezimalkomma, eine Zeile pro Übung und Tag mit höchster Wiederholungszahl, höchstem Gewicht und Volumen), als Markdown und als JSON-Sicherung, mit Wiedereinlesen der Sicherung.
 - **Im eigenen Konto speichern**, wenn die Umgebung das erlaubt (nur du siehst die Einträge), sonst im Browser auf dem Gerät.
 - Auf dem Smartphone nutzbar sein und ein helles und dunkles Erscheinungsbild haben.
 

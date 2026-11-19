@@ -91,6 +91,7 @@ Für das Ernährungsprotokoll `references/ernaehrung.md` lesen. Dort stehen Feld
 - Jede Zelle in Anführungszeichen, Anführungszeichen verdoppeln. Zellen, die mit `=`, `+`, `-` oder `@` beginnen, mit einem Apostroph schützen.
 - Dezimalzahlen mit Komma, damit Excel und Numbers in deutschen Einstellungen sie als Zahl lesen.
 - Tagesangaben (z. B. Befinden) nur in der ersten Zeile des Tages.
+- Zusätzlich zum Zeitraum gibt es im Export eine Auswahl „Übung“ (Standard: alle). Sie gilt für CSV und Markdown, nicht für die JSON-Sicherung. Der Name der Übung steht im Dateinamen und im Markdown-Titel. Gibt es im Zeitraum keinen Eintrag zur Übung, erscheint eine Meldung statt einer leeren Datei. So lässt sich die CSV einer Übung direkt als Liniendiagramm verwenden.
 
 **Verlauf und Diagramm**
 - Reihen nach Namen zusammenführen, ohne Unterschied bei Groß- und Kleinschreibung. Mehrere Blöcke am selben Tag zusammenrechnen.

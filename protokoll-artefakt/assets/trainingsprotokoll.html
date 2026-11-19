@@ -224,6 +224,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       <div class="row">
         <div class="field" style="width:160px"><label class="label" for="from">Von</label><input id="from" type="date"></div>
         <div class="field" style="width:160px"><label class="label" for="to">Bis</label><input id="to" type="date"></div>
+        <div class="field" style="flex:1 1 220px;max-width:340px"><label class="label" for="exSel">Übung</label><select id="exSel"><option value="">Alle Übungen</option></select></div>
       </div>
       <div class="btns" id="expBtns">
         <button class="btn primary" id="expCsv" type="button">Als CSV speichern</button>
@@ -232,7 +233,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       </div>
       <p class="msg" id="expMsg" role="status"></p>
       <textarea id="preview" rows="8" readonly hidden aria-label="Markdown-Vorschau"></textarea>
-      <p class="note">Die CSV ist mit Semikolon getrennt und hat eine Zeile pro Übung und Tag, mit höchster Wiederholungszahl, höchstem Gewicht und Volumen. Dezimalzahlen haben ein Komma. Beide Dateien enthalten nur den gewählten Zeitraum.</p>
+      <p class="note">Die CSV ist mit Semikolon getrennt und hat eine Zeile pro Übung und Tag, mit höchster Wiederholungszahl, höchstem Gewicht und Volumen. Dezimalzahlen haben ein Komma. Beide Dateien enthalten nur den gewählten Zeitraum und, wenn du eine Übung auswählst, nur diese Übung. Die JSON-Sicherung enthält immer alles.</p>
     </div>
     <div class="card">
       <h2>Datensicherung</h2>
@@ -748,12 +749,36 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   window.addEventListener("resize", function () { if (!$("p-hist").hidden && SER[serKey] && metric) drawChart(); });
 
   /* ---------- Export ---------- */
-  function range() { return contentDates($("from").value, $("to").value); }
+  /* Auswahl einer einzelnen Übung für den Export */
+  function exKey(r) { return isEnd(r.k) ? "~" + r.k : (r.name.trim() ? "x:" + r.name.trim().toLowerCase() : ""); }
+  function exSel() { var el = $("exSel"); return el ? el.value : ""; }
+  function exLabel() { var el = $("exSel"); return el && el.value && el.selectedIndex >= 0 ? el.options[el.selectedIndex].text : ""; }
+  function filledF(d) { var f = exSel(); return filled(d).filter(function (r) { return !f || exKey(r) === f; }); }
+  function slug(s) {
+    return String(s).replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/Ä/g, "Ae").replace(/Ö/g, "Oe").replace(/Ü/g, "Ue").replace(/ß/g, "ss").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+  }
+  function refreshExList() {
+    var map = {};
+    Object.keys(days).sort().forEach(function (k) {
+      filled(days[k]).forEach(function (r) {
+        var key = exKey(r); if (!key) return;
+        map[key] = { key: key, label: isEnd(r.k) ? TYPES[r.k] : r.name.trim(), end: isEnd(r.k) };
+      });
+    });
+    var list = Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return (a.end - b.end) || a.label.localeCompare(b.label, "de"); });
+    var el = $("exSel"), prev = el.value;
+    el.innerHTML = '<option value="">Alle Übungen</option>' + list.map(function (o) { return '<option value="' + esc(o.key) + '">' + esc(o.label) + "</option>"; }).join("");
+    el.value = map[prev] ? prev : "";
+  }
+  function range() {
+    var f = exSel();
+    return contentDates($("from").value, $("to").value).filter(function (k) { return !f || filledF(days[k]).length > 0; });
+  }
   function mdCell(v) { return String(v || "").replace(/\|/g, "\\|").replace(/\s*\n\s*/g, " "); }
   function buildMd(ds) {
-    var out = ["# Trainingsprotokoll", "", "Zeitraum: " + shortDate(ds[0]) + " bis " + shortDate(ds[ds.length - 1]) + " · " + ds.length + " Tage erfasst", ""];
+    var lab = exLabel(), out = ["# Trainingsprotokoll" + (lab ? ": " + lab : ""), "", "Zeitraum: " + shortDate(ds[0]) + " bis " + shortDate(ds[ds.length - 1]) + " · " + ds.length + " Tage erfasst", ""];
     ds.forEach(function (k) {
-      var d = days[k], rows = filled(d);
+      var d = days[k], rows = filledF(d);
       out.push("## " + longDate(k), "");
       if (rows.length) {
         out.push("| Art | Übung | Sätze (Wdh. × kg) | Dauer | Notiz |", "|---|---|---|---|---|");
@@ -771,7 +796,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   function buildCsv(ds) {
     var lines = [["Datum", "Art", "Übung", "Sätze", "Max. Wiederholungen", "Max. Gewicht (kg)", "Volumen (kg)", "Dauer (Min.)", "Notiz", "Befinden"].map(csvCell).join(";")];
     ds.forEach(function (k) {
-      var d = days[k], rows = filled(d);
+      var d = days[k], rows = filledF(d);
       if (!rows.length) { lines.push([k, "", "", "", "", "", "", "", "", d.f.feel].map(csvCell).join(";")); return; }
       rows.forEach(function (r, i) {
         var a = agg(r), end = isEnd(r.k);
@@ -780,7 +805,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
     });
     return "﻿" + lines.join("\r\n");
   }
-  function fname(ds, ext) { return "Trainingsprotokoll_" + ds[0] + "_bis_" + ds[ds.length - 1] + "." + ext; }
+  function fname(ds, ext) { var sl = slug(exLabel()); return "Trainingsprotokoll_" + (sl ? sl + "_" : "") + ds[0] + "_bis_" + ds[ds.length - 1] + "." + ext; }
   function save(filename, data, msgEl) {
     if (!downloads) { msgEl.textContent = "Speichern ist in dieser Ansicht nicht verfügbar. Nutze „Markdown kopieren“."; return; }
     downloads.save({ filename: filename, data: data }).then(function () {
@@ -791,7 +816,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   }
   function exportNeeds() {
     var ds = range();
-    if (!ds.length) { $("expMsg").textContent = "Im gewählten Zeitraum gibt es keine Einträge."; return null; }
+    if (!ds.length) { $("expMsg").textContent = "Im gewählten Zeitraum gibt es keine Einträge" + (exSel() ? " für diese Übung" : "") + "."; return null; }
     return ds;
   }
   $("expMd").addEventListener("click", function () { var ds = exportNeeds(); if (ds) save(fname(ds, "md"), buildMd(ds), $("expMsg")); });
@@ -827,6 +852,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   function refreshRange() {
     var ds = contentDates();
     if (ds.length) { $("from").value = ds[0]; $("to").value = ds[ds.length - 1]; }
+    refreshExList();
   }
 
   /* ---------- Reiter ---------- */
