@@ -256,7 +256,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
         <div class="field"><span class="label">Gewicht optional</span><span>Bei Calisthenics oder Übungen mit Körpergewicht lässt du das Feld leer. Dann zählen nur die Wiederholungen.</span></div>
         <div class="field"><span class="label">Zuletzt und Vorschläge</span><span>Frühere Übungsnamen erscheinen als Vorschlag. Unter dem Namen siehst du die Sätze vom letzten Mal und kannst sie übernehmen.</span></div>
         <div class="field"><span class="label">Schwimmen und Biken</span><span>Hier trägst du nur die Dauer in Minuten ein. Die Beschreibung ist frei, etwa „Brust, Hallenbad“.</span></div>
-        <div class="field"><span class="label">Entwicklung lesen</span><span>Im Verlauf wählst du eine Übung und siehst höchstes Gewicht, Ø Wiederholungen, Volumen oder Dauer über die Zeit. Für Steigerungen eignet sich das höchste Gewicht am besten.</span></div>
+        <div class="field"><span class="label">Entwicklung lesen</span><span>Im Verlauf wählst du eine Übung und siehst höchstes Gewicht, höchste Wiederholungszahl, Volumen oder Dauer über die Zeit. Für Steigerungen eignet sich das höchste Gewicht am besten.</span></div>
       </div>
       <div class="hint">Gleiche Übungen werden über den Namen zusammengeführt. Schreibe „Kniebeuge“ also immer gleich. Groß- und Kleinschreibung spielt keine Rolle.</div>
     </div>
@@ -270,7 +270,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   var TYPES = ["Kraft", "Calisthenics", "Schwimmen", "Biken"];
   var METRICS = [
     { id: "maxW", label: "Max. Gewicht", unit: " kg", end: false, dec: 2 },
-    { id: "avgR", label: "Ø Wiederholungen", unit: "", end: false, dec: 1 },
+    { id: "maxR", label: "Max. Wiederholungen", unit: "", end: false, dec: 0 },
     { id: "vol", label: "Volumen", unit: " kg", end: false, dec: 0 },
     { id: "n", label: "Sätze", unit: "", end: false, dec: 0 },
     { id: "dur", label: "Dauer", unit: " Min.", end: true, dec: 0 }
@@ -344,7 +344,6 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
     });
     return {
       n: ss.length, reps: sum(reps),
-      avgR: reps.length ? sum(reps) / reps.length : NaN,
       maxR: reps.length ? Math.max.apply(null, reps) : NaN,
       maxW: ws.length ? Math.max.apply(null, ws) : NaN,
       vol: hasVol ? vol : NaN, dur: num(r.dur)
@@ -584,7 +583,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
         } else {
           var all = []; rows.forEach(function (r) { all = all.concat(r.sets); });
           var a = agg({ sets: all, dur: "" });
-          p.n = a.n; p.avgR = a.avgR; p.maxW = a.maxW; p.vol = a.vol;
+          p.n = a.n; p.maxR = a.maxR; p.maxW = a.maxW; p.vol = a.vol;
         }
         return p;
       });
@@ -630,7 +629,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       var list = rows.map(function (r) {
         var a = agg(r), bits;
         if (isEnd(r.k)) bits = [isFinite(a.dur) ? fmt(a.dur, 0) + " Min." : "", r.name.trim()];
-        else bits = [a.n ? a.n + (a.n === 1 ? " Satz" : " Sätze") : "", isFinite(a.avgR) ? "Ø " + fmt(a.avgR, 1) + " Wdh." : "", isFinite(a.maxW) ? "max. " + fmt(a.maxW, 2) + " kg" : ""];
+        else bits = [a.n ? a.n + (a.n === 1 ? " Satz" : " Sätze") : "", isFinite(a.maxR) ? "max. " + fmt(a.maxR, 0) + " Wdh." : "", isFinite(a.maxW) ? "max. " + fmt(a.maxW, 2) + " kg" : ""];
         bits.push(r.note.trim());
         return "<li><b>" + esc(isEnd(r.k) ? TYPES[r.k] : (r.name.trim() || TYPES[r.k])) + "</b>" + bits.filter(Boolean).map(function (x) { return " · " + esc(x); }).join("") + "</li>";
       }).join("");
@@ -692,11 +691,11 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       head = "<tr><th>Datum</th><th>Dauer (Min.)</th></tr>";
       body = rows.map(function (p) { return "<tr><td>" + shortDate(p.d) + "</td><td>" + fmt(p.dur, 0) + "</td></tr>"; }).join("");
     } else {
-      head = "<tr><th>Datum</th><th>Sätze</th><th>Ø Wdh.</th><th>Max. kg</th><th>Volumen</th></tr>";
-      body = rows.map(function (p) { return "<tr><td>" + shortDate(p.d) + "</td><td>" + p.n + "</td><td>" + fmt(p.avgR, 1) + "</td><td>" + fmt(p.maxW, 2) + "</td><td>" + fmt(p.vol, 0) + "</td></tr>"; }).join("");
+      head = "<tr><th>Datum</th><th>Sätze</th><th>Max. Wdh.</th><th>Max. kg</th><th>Volumen</th></tr>";
+      body = rows.map(function (p) { return "<tr><td>" + shortDate(p.d) + "</td><td>" + p.n + "</td><td>" + fmt(p.maxR, 0) + "</td><td>" + fmt(p.maxW, 2) + "</td><td>" + fmt(p.vol, 0) + "</td></tr>"; }).join("");
     }
     $("devTable").innerHTML = "<thead>" + head + "</thead><tbody>" + body + "</tbody>";
-    $("devNote").textContent = metric === "vol" ? "Volumen ist die Summe aus Wiederholungen × Gewicht aller Sätze eines Tages. Sätze ohne Gewicht zählen nicht mit." : metric === "maxW" ? "Max. Gewicht ist das höchste Gewicht, das du an diesem Tag bei der Übung eingetragen hast." : (s.end ? "" : "Mehrere Blöcke derselben Übung an einem Tag werden zusammengerechnet.");
+    $("devNote").textContent = metric === "vol" ? "Volumen ist die Summe aus Wiederholungen × Gewicht aller Sätze eines Tages. Sätze ohne Gewicht zählen nicht mit." : metric === "maxW" ? "Max. Gewicht ist das höchste Gewicht, das du an diesem Tag bei der Übung eingetragen hast." : metric === "maxR" ? "Max. Wiederholungen ist die höchste Wiederholungszahl eines Satzes an diesem Tag." : (s.end ? "" : "Mehrere Blöcke derselben Übung an einem Tag werden zusammengerechnet.");
   }
 
   function drawChart() {
