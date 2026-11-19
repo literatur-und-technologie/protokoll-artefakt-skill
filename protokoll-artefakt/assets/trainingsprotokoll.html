@@ -232,7 +232,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
       </div>
       <p class="msg" id="expMsg" role="status"></p>
       <textarea id="preview" rows="8" readonly hidden aria-label="Markdown-Vorschau"></textarea>
-      <p class="note">Die CSV ist mit Semikolon getrennt und hat eine Zeile pro Übung und Tag, mit dem Durchschnitt der Wiederholungen sowie höchstem Gewicht und Volumen. Dezimalzahlen haben ein Komma. Beide Dateien enthalten nur den gewählten Zeitraum.</p>
+      <p class="note">Die CSV ist mit Semikolon getrennt und hat eine Zeile pro Übung und Tag, mit höchster Wiederholungszahl, höchstem Gewicht und Volumen. Dezimalzahlen haben ein Komma. Beide Dateien enthalten nur den gewählten Zeitraum.</p>
     </div>
     <div class="card">
       <h2>Datensicherung</h2>
@@ -345,6 +345,7 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
     return {
       n: ss.length, reps: sum(reps),
       avgR: reps.length ? sum(reps) / reps.length : NaN,
+      maxR: reps.length ? Math.max.apply(null, reps) : NaN,
       maxW: ws.length ? Math.max.apply(null, ws) : NaN,
       vol: hasVol ? vol : NaN, dur: num(r.dur)
     };
@@ -769,13 +770,13 @@ input[type="number"], .mono { font-family: var(--font-mono); font-variant-numeri
   }
   function csvCell(v) { v = String(v == null ? "" : v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; }
   function buildCsv(ds) {
-    var lines = [["Datum", "Art", "Übung", "Sätze", "Ø Wiederholungen", "Max. Gewicht (kg)", "Volumen (kg)", "Dauer (Min.)", "Notiz", "Befinden"].map(csvCell).join(";")];
+    var lines = [["Datum", "Art", "Übung", "Sätze", "Max. Wiederholungen", "Max. Gewicht (kg)", "Volumen (kg)", "Dauer (Min.)", "Notiz", "Befinden"].map(csvCell).join(";")];
     ds.forEach(function (k) {
       var d = days[k], rows = filled(d);
       if (!rows.length) { lines.push([k, "", "", "", "", "", "", "", "", d.f.feel].map(csvCell).join(";")); return; }
       rows.forEach(function (r, i) {
         var a = agg(r), end = isEnd(r.k);
-        lines.push([k, TYPES[r.k], r.name.trim(), end ? "" : a.n, end ? "" : fmt(a.avgR, 1), end ? "" : fmt(a.maxW, 2), end ? "" : fmt(a.vol, 0), end ? fmt(a.dur, 0) : "", r.note, i === 0 ? d.f.feel : ""].map(csvCell).join(";"));
+        lines.push([k, TYPES[r.k], r.name.trim(), end ? "" : a.n, end ? "" : fmt(a.maxR, 0), end ? "" : fmt(a.maxW, 2), end ? "" : fmt(a.vol, 0), end ? fmt(a.dur, 0) : "", r.note, i === 0 ? d.f.feel : ""].map(csvCell).join(";"));
       });
     });
     return "﻿" + lines.join("\r\n");

@@ -35,7 +35,7 @@ Er wurde für Claude geschrieben und setzt dort auf „Artefakte“ (Webseiten, 
 - **Einträge pro Tag** erfassen, bei Kraft und Calisthenics jeden Satz einzeln, Gewicht optional, bei Ausdauer nur die Dauer.
 - **Vorschläge** aus früheren Einträgen anbieten und die Sätze vom letzten Mal übernehmen lassen.
 - Den **Verlauf pro Übung** als Diagramm und Tabelle zeigen (höchstes Gewicht, Ø Wiederholungen, Volumen, Sätze, Dauer). Für Steigerungen eignet sich das höchste Gewicht am besten.
-- **Exportieren** als CSV (Semikolon, Dezimalkomma, eine Zeile pro Übung und Tag mit dem Durchschnitt der Wiederholungen, höchstem Gewicht und Volumen), als Markdown und als JSON-Sicherung, mit Wiedereinlesen der Sicherung.
+- **Exportieren** als CSV (Semikolon, Dezimalkomma, eine Zeile pro Übung und Tag mit höchster Wiederholungszahl, höchstem Gewicht und Volumen), als Markdown und als JSON-Sicherung, mit Wiedereinlesen der Sicherung.
 - **Im eigenen Konto speichern**, wenn die Umgebung das erlaubt (nur du siehst die Einträge), sonst im Browser auf dem Gerät.
 - Auf dem Smartphone nutzbar sein und ein helles und dunkles Erscheinungsbild haben.
 
@@ -76,7 +76,7 @@ Die Anleitung ist reines Markdown, die Vorlage eine einzelne HTML-Datei mit eing
 - Wer geräteübergreifend speichern möchte, braucht eine eigene Lösung (eigener Server, Cloud-Datei). Das leistet der Skill nicht.
 
 **Hinweis zur Prüfung**
-Jede Seite, die ein KI-Assistent baut, sollte man selbst testen: einen Eintrag anlegen, die Seite neu laden, die CSV exportieren und in einem Tabellenprogramm öffnen. Prüfe dabei besonders Umlaute, Dezimalkommas und die Durchschnittswerte.
+Jede Seite, die ein KI-Assistent baut, sollte man selbst testen: einen Eintrag anlegen, die Seite neu laden, die CSV exportieren und in einem Tabellenprogramm öffnen. Prüfe dabei besonders Umlaute, Dezimalkommas und die berechneten Werte.
 
 ## Anpassung
 
